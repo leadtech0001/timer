@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 
+<!--この部分がプッシュできるかのテスト-->
+
 <!-- @inject('MovieViewHealper', 'resources\view\helper\movie') -->
 $MovieViewHealper = {{resources\views\helper\movie\MovieViewHealper}}
     <head>

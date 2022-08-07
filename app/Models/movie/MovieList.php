@@ -16,7 +16,8 @@ class MovieList extends User
     {
         $movieList = DB::table('movie_list')
                     ->leftjoin('movie_users', 'movie_list.user_id', '=', 'movie_users.id')
-                    ->select( 
+                    ->select(
+                        'movie_list.id',                // 映画ID
                         'movie_list.movie_name',        // 映画タイトル
                         'movie_list.genre',             // ジャンル
                         'movie_list.evaluation',        // 自己評価
@@ -41,6 +42,7 @@ class MovieList extends User
         $movieList = DB::table('movie_list')
                     ->leftjoin('movie_users', 'movie_list.user_id', '=', 'movie_users.id')
                     ->select( 
+                        'movie_list.id',                // 映画ID
                         'movie_list.movie_name',        // 映画タイトル
                         'movie_list.genre',             // ジャンル
                         'movie_list.evaluation',        // 自己評価
@@ -63,14 +65,13 @@ class MovieList extends User
     }
 
     /**
-     * 会員IDをもとに紐づく映画情報取得
+     * 映画IDをもとに紐づく映画情報取得
      * @param id 会員ID 
      * @return 
      */
     public function getMovieDetail($movieId) :object
     {
         $movieDetail = DB::table('movie_list')
-                    ->leftjoin('movie_user', 'movie_list.user_id', '=', 'movie_user.id')
                     ->select( 
                         'movie_list.id',                // ID
                         'movie_list.movie_name',        // 映画タイトル

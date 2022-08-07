@@ -10,29 +10,36 @@
             <p><a href="{{ route('movie-index')}}">一覧に戻る</a></p>
             <h1>見たい映画詳細画面</h1>
 
-            <p>{{ $watchFlag }}</p>
-            
-            <table id="table">
-                <thead>
-                    <tr>
-                        <th id="0" data-sort="">タイトル</th>
-                        <th id="1" data-sort="">メイン画像</th>
-                        <th id="1" data-sort="">ジャンル</th>
-                        <th id="2" data-sort="">自己評価</th>
-                        <th id="3" data-sort="">世間の評価</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ $id }}</td>
-                        <td>{{ $movieName }}</td>
-                        <td>{{ $genre }}</td>
-                        <td>{{ $evaluation }}</td>
-                        <td>{{ $publicEvaluation }}</td>
-                        <td>{{ $imagePath }}</td>
-                    </tr>
-                </tbody>
+            <p>{{ $movieDetail['watchFlag'] }}</p>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <td>{{ $movieDetail['id'] }}</td>
+                </tr>
+                <tr>
+                    <th>タイトル</th>
+                    <td>{{ $movieDetail['movieName'] }}</td>
+                </tr>
+                <tr>
+                    <th>メイン画像</th>
+                    <td>{{ $movieDetail['imagePath'] }}</td>
+                </tr>
+                <tr>
+                    <th>ジャンル</th>
+                    <td>{{ $movieDetail['genre'] }}</td>
+                </tr>
+                <tr>
+                    <th>自己評価</th>
+                    <td>{{ $movieDetail['evaluation'] }}</td>
+                </tr>
+                <tr>
+                    <th>世間の評価</th>
+                    <td>{{ $movieDetail['publicEvaluation'] }}</td>
+                </tr>
             </table>
+            <div>
+                <a href="{{ route('movie-evaluation', ['id' => $movieDetail['id']] ) }}">評価を入力</a>
+            </div>
         </div>
     </body>
 </html>

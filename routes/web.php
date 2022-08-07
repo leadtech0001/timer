@@ -102,13 +102,17 @@ Route::post('/movie/movie-register', [MovieRegistController::class, 'store'])
 ->name('movie-register');
 
 // 詳細
-Route::get('/movie/movie-detail/{{id}}', [MovieController::class, 'detail'])
+Route::get('/movie/movie-detail/{id}', [MovieController::class, 'detail'])
 ->name('movie-detail');
 
 // 評価登録
-Route::get('/movie/movie-evaluation/{{id}}', [MovieController::class, 'evaluation'])
+Route::get('/movie/movie-evaluation/{id}', [MovieController::class, 'evaluation'])
+//->middleware('guest.movie')
 ->name('movie-evaluation');
 
+Route::post('/movie/movie-evaluation/{id}', [MovieController::class, 'evaluationRegister'])
+//->middleware('guest.movie')
+->name('movie-evaluation');
 
 
 

@@ -2,12 +2,14 @@
 <!DOCTYPE html>
 <html lang="ja">
 
-<!-- @inject('MovieViewHealper', 'resources\view\helper\movie') -->
-$MovieViewHealper = {{resources\views\helper\movie\MovieViewHealper}}
+<?php  $test = app()->make(MovieViewHealper::class);   ?>
+<?php App\Resources\views\movie\MovieViewHealper::test(); ?>
+
+{{--@inject('$MovieViewHealper', 'resources\views\helper\movie\MovieViewHealper')--}}
     <head>
         <meta charset="utf-8">
         @push('css')
-        <link rel="stylesheet" href="{{asset('/css/movie/movieCss.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('/css/movie/movieCss.css') }}">
         @endpush
         <title>一覧</title>
     </head>
@@ -25,15 +27,15 @@ $MovieViewHealper = {{resources\views\helper\movie\MovieViewHealper}}
                     <div>
                         <input type="radio" name="genre" value="{{ $genreTitle }}">
                         <label>{{ $genreTitle }}</label>
+                        
                     </div>
                     @endforeach
                 </div>
                 <button type="submit" name="search" class="btn btn-primary">検索する</button>
             </form>
             <div>
-                @if(isset($movieList))
+                @if($movieList->movieList->isNotempty())
                     <table>
-                    <form action=""  method="POST" class="form-inline mb-2" style="display:inline;">
                         <tr>
                             <th>タイトル</th>
                             <th>ジャンル</th>
@@ -43,20 +45,19 @@ $MovieViewHealper = {{resources\views\helper\movie\MovieViewHealper}}
                             <th>見たフラグ</th>
                             <th></th>
                             <th></th>
-                            @foreach($movieList as $movie)
+                            @foreach($movieList->movieList as $value)
                                 <tr>
-                                    <th>{{$movie['movieName']}}</th>
-                                    <th>{{$movie['genre']}}</th>
-                                    <th>$MovieViewHealper->evaluationTransitionManager()</th>
-                                    <th>{{$movie['evaluation']}}</th>
-                                    <th>{{$movie['publicEvaluation']}}</th>
-                                    <th>{{$movie['watchFlag']}}</th>
-                                    <th><button type="submit" name="evaluation">評価を入力</button></th>
-                                    <th><button type="submit" name="detail">詳細</button></th>
+                                    <th>{{$value->movie_name}}</th>
+                                    <th>{{$value->genre}}</th>
+                                    <th></th>
+                                    <th>{{$value->evaluation}}</th>
+                                    <th>{{$value->public_evaluation}}</th>
+                                    <th>{{$value->watch_flag}}</th>  
+                                    <th><a href="{{ route('movie-evaluation', ['id'=>$value->id] ) }}">評価を入力</a></th>
+                                    <th><a href="{{ route('movie-detail', ['id'=>$value->id] ) }}">詳細</a></th>
                                 </tr>
                             @endforeach                                              
                         </tr>
-                    </form>
                     </table>
                 @else
                     <p style="color:red ;">1件もヒットしませんでした。</p>

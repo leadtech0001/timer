@@ -9,6 +9,7 @@ use App\Models\movie\MovieList;
 use App\Models\movie\MovieUser;
 use App\Http\Requests\MovieEvaluationRegist;
 use App\Helper\Movie\MovieHealper;
+use App\Resources\views\movie\MovieViewHealper;
 
 
 class MovieController extends Controller
@@ -42,22 +43,17 @@ class MovieController extends Controller
         if(Auth::guard('movie')->check()){
             $user_id = Auth::guard('movie')->user()->id;
             $objMovieList = $this->movieList->getMovieListForIndex($user_id);
-                if(isset($objMovieList)){
-                    foreach($objMovieList->movieList as $seq => $value){
-                        $movieList[$seq] = array(
-                            'movie_name' => $objMovieList->movieList[$seq]->movie_name,
-                            'genre' => $objMovieList->movieList[$seq]->genre,
-                            'evaluation' => $objMovieList->movieList[$seq]->evaluation,
-                            'public_evaluation' => $objMovieList->movieList[$seq]->public_evaluation,
-                            'watch_flag' => $objMovieList->movieList[$seq]->watch_flag,
-                            'imagePath' => $objMovieList->movieList[$seq]->image_path,
-                        );
-                    }
+                    app()->bind(MovieViewHealper::class, function () {
+                        return new MovieViewHealper;
+                    });
+                    //$test = app()->make(MovieViewHealper::class);
+                    //$tests = $test->watchFlagManager(0);
+                    //var_dump($tests);
+                    //die;
                     return view('movie.movieIndex' , [
-                        'movieList' => $movieList,
+                        'movieList' => $objMovieList,
                         'genreList' => MovieHealper::$MOVIE_GENRE_FANTASY_ARRAY,
                     ]);
-                }
             }
         // ログインしていなければログインページにリダイレクト
         return redirect() -> route('movie-login');
@@ -79,53 +75,49 @@ class MovieController extends Controller
 
         // 検索条件から映画情報を取得
         $objMovieList = $this->movieList->getMovieListForSearch($user_id, $genre, $movieName);
-        //var_dump($objMovieList);
-        //die;
-        $movieList = null;
         if(isset($objMovieList)){
-            foreach($objMovieList->movieList as $seq => $value){
-                $movieList[$seq] = array(
-                    'movieName'        => $objMovieList->movieList[$seq]->movie_name,
-                    'genre'            => $objMovieList->movieList[$seq]->genre,
-                    'evaluation'       => $objMovieList->movieList[$seq]->evaluation,
-                    'publicEvaluation' => $objMovieList->movieList[$seq]->public_evaluation,
-                    'watchFlag'        => $objMovieList->movieList[$seq]->watch_flag,
-                    'imagePath'        => $objMovieList->movieList[$seq]->image_path,
-                );
-            }
             return view('movie.movieIndex' , [
-                'movieList' => $movieList,
+                'movieList' => $objMovieList,
                 'genreList' => MovieHealper::$MOVIE_GENRE_FANTASY_ARRAY,
             ]);
         }
     }
+
     /**
      * 詳細
      * @param movieId 映画ID
      * @param movieDetail 映画詳細情報
      * @return view 
      */
-    public function detail(Request $request){
-        // 映画IDの取得
-        $movieId = $request['movie_id'];
-        // 会員IDで映画情報取得
+    public function detail($movieId){
+        // 映画IDで映画情報取得
         $objMovieList = $this->movieList->getMovieDetail($movieId);
         if(isset($objMovieList)){
-            foreach($objMovieList as $value){
+            foreach($objMovieList->movieDetail as $value){
                 $movieDetail = array(
                     'id' => $value->id,
-                    'movieName' => $value->movie_name,
-                    'genre' => $value->genre,
-                    'evaluation' => $value->evaluation,
+                    'movieName'        => $value->movie_name,
+                    'genre'            => $value->genre,
+                    'evaluation'       => $value->evaluation,
                     'publicEvaluation' => $value->public_evaluation,
-                    'watchFlag' => $value->watch_flag,
-                    'imagePath' => $value->image_path,
+                    'watchFlag'        => $value->watch_flag,
+                    'imagePath'        => $value->image_path,
                 );
             }
         }
         return view('movie.movieDetail' , [
-            'movieDetail' => $movieDetail
+            'movieDetail' => $movieDetail,
         ]);
+    }
+
+    /**
+     * 評価登録中継
+     * @param id 映画ID
+     * @return view 
+     */
+    public function evaluation($movieId){
+
+        return view('movie.movieEdit', compact('movieId'));
     }
 
     /**
@@ -133,15 +125,15 @@ class MovieController extends Controller
      * @param id 会員ID
      * @return view 
      */
-    public function evaluation(MovieEvaluationRegist $request){
+    public function evaluationRegister(MovieEvaluationRegist $request){
         // 会員IDで映画情報取得
         $id = $request->id;
-        $movieDetail = $request;
+
         $this->movieList->setMovieList($id, $movieDetail);
 
 
 
-        return redirect() -> route('movie-detail') -> with('flash_message', '登録完了しました。');;
+        return view('movie.movieEdit', compact('id'));
     }
 
 

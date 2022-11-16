@@ -39,41 +39,36 @@ class TimerController extends Controller
      * @return view
      */
     public function index(){
-        // ログイン状態を確認
-        if(Auth::check()){
-            // 全プレイヤー情報取得
-            $objPlayerData = $this->player->getPlayer();
+        // 全プレイヤー情報取得
+        $objPlayerData = $this->player->getPlayer();
 
 
-            if(isset($objPlayerData)){
-                $PlayerData[] = array();
-                foreach($objPlayerData->sql as $seq => $value){
-                    $endFlag = 0;
-                    // 現在日付とend_at(タイマー時間設定)との時間差を計算する
-                    if(isset($objPlayerData->sql[$seq]->end_at)){
-                        $endFlag = 1;
-                    }
-                    $fromTime = new DateTime();
-                    $endTime = $objPlayerData->sql[$seq]->end_at;
-                    $toTime = new DateTime($endTime);
-                    $diff = $fromTime->diff($toTime);
-                    $PlayerData[$seq] = array(
-                        'id' => $objPlayerData->sql[$seq]->id,
-                        'playerName' => $objPlayerData->sql[$seq]->player_name,
-                        'shipNumber' => $objPlayerData->sql[$seq]->ship_number,
-                        'diffTime' => $diff->format('%d日%h時間%i分%s秒'),
-                        'endFlag' => $endFlag,
-                        'fromTime' => $fromTime,
-                        'endTime' => $endTime,
-                    );
+        if(isset($objPlayerData)){
+            $PlayerData[] = array();
+            foreach($objPlayerData->sql as $seq => $value){
+                $endFlag = 0;
+                // 現在日付とend_at(タイマー時間設定)との時間差を計算する
+                if(isset($objPlayerData->sql[$seq]->end_at)){
+                    $endFlag = 1;
                 }
+                $fromTime = new DateTime();
+                $endTime = $objPlayerData->sql[$seq]->end_at;
+                $toTime = new DateTime($endTime);
+                $diff = $fromTime->diff($toTime);
+                $PlayerData[$seq] = array(
+                    'id' => $objPlayerData->sql[$seq]->id,
+                    'playerName' => $objPlayerData->sql[$seq]->player_name,
+                    'shipNumber' => $objPlayerData->sql[$seq]->ship_number,
+                    'diffTime' => $diff->format('%d日%h時間%i分%s秒'),
+                    'endFlag' => $endFlag,
+                    'fromTime' => $fromTime,
+                    'endTime' => $endTime,
+                );
             }
-            return view('/timer' , [
-                'playerData' => $PlayerData
-            ]);
         }
-        // ログイン状態でなければログイン画面へリダイレクト
-        return redirect() -> route('login');
+        return view('/timer' , [
+            'playerData' => $PlayerData
+        ]);
     }
     /**
      * スーパータイマー　共通
@@ -135,7 +130,7 @@ class TimerController extends Controller
             $this->player->setPlayer($playerName, $shipNumber);
         }
 
-        return redirect()->route('index');
+        return redirect()->route('timerIndex');
     }
     /**
      * スーパータイマー　入力チェック

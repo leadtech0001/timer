@@ -9,7 +9,6 @@
     </head>
     <body class="mt-4">
         <div class="container">
-            <p><a href="{{ route('logout')}}">ログアウトする</p>
             <h1><a href="timer">SuperTimer</a></h1>
             
             <h2>タイマー登録</h2>
